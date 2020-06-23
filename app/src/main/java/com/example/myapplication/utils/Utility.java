@@ -5,6 +5,8 @@ import android.text.TextUtils;
 import com.example.myapplication.db.City;
 import com.example.myapplication.db.County;
 import com.example.myapplication.db.Province;
+import com.example.myapplication.json.Weather;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -84,6 +86,26 @@ public class Utility {
         return false;
 
     }
+
+    /*
+    * 解析返回的json数据为实体类
+    * */
+    public static Weather handleWeatherRes(String res){
+
+        try {
+            JSONObject jsonObject = new JSONObject(res);
+            JSONArray jsonArray = jsonObject.getJSONArray("HeWeather");
+            String weatherContent = jsonArray.getJSONObject(0).toString();
+            return new Gson().fromJson(weatherContent,Weather.class); //将Json数据映射为Java实体类对象
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+
+    }
+
+
+
 
 
 

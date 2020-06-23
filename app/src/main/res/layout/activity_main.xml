@@ -10,8 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/choose_are_fragment"
-        android:name="com.example.myapplication.json.ChooseAreaFragment"
-
+        android:name="com.example.myapplication.fragment.ChooseAreaFragment"
         />
 
 </FrameLayout>

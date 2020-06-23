@@ -1,6 +1,7 @@
-package com.example.myapplication.json;
+package com.example.myapplication.fragment;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.WeatherActivity;
 import com.example.myapplication.db.City;
 import com.example.myapplication.db.County;
 import com.example.myapplication.db.Province;
@@ -93,6 +96,21 @@ public class ChooseAreaFragment extends Fragment {
                     case LEVEL_CITY:
                         selectCity = cityList.get(i);//设置当前选中的市
                         queryCountries();
+                        break;
+                    case LEVEL_COUNTRY:
+                        String weatherId = countryList.get(i).getWeatherId();
+                        if(getActivity() instanceof MainActivity){
+                            Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                            intent.putExtra("weather_id",weatherId);
+                            startActivity(intent);
+                            getActivity().finish();
+                        }else if(getActivity() instanceof WeatherActivity){
+                            WeatherActivity activity = (WeatherActivity) getActivity();
+                            activity.drawerLayout.closeDrawers();
+                            activity.swipeRefresh.setRefreshing(false);
+                            activity.requestWeather(weatherId);
+                        }
+
                         break;
                     default:
                 }
@@ -313,6 +331,10 @@ public class ChooseAreaFragment extends Fragment {
             progressDialog.dismiss();
         }
     }
+
+
+
+
 
 
 
