@@ -77,6 +77,68 @@ public class WeatherActivity extends AppCompatActivity {
         setContentView(R.layout.activity_weather);
 
         // 初始化各控件
+        init();
+
+        // 获取SharedPreferences对象
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+
+        String bingPic = prefs.getString("bing_pic",null);
+        if (bingPic != null){
+            Glide.with(this).load(bingPic).into(bingPicImg);
+        }else {
+            // 请求获取图片
+            loadPic();
+        }
+
+        // 根据系统版本判断是否开该功能
+        if (Build.VERSION.SDK_INT >= 21) {
+            View decorView = getWindow().getDecorView();
+            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+//            getWindow().setStatusBarColor(Color.TRANSPARENT);
+        }
+
+
+        // 判断是否错在有缓存
+        String weatherString = prefs.getString("weather", null);
+        if (weatherString != null){
+            Weather weather = Utility.handleWeatherRes(weatherString);
+            showWeather(weather);
+        }else {
+            // 从上一个Intent获取weatherId
+            String weatherId = getIntent().getStringExtra("weather_id");
+
+            // 在数据加载出来前隐藏weatherLayout
+            weatherLayout.setVisibility(View.INVISIBLE);
+
+            // 发起请求
+            requestWeather(weatherId);
+        }
+
+        // 手动刷新
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                requestWeather(mWeatherId);
+            }
+        });
+
+        // 显示侧边栏
+        navButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawerLayout.openDrawer(GravityCompat.START);//打开左侧侧边栏
+            }
+        });
+
+    }
+
+
+    /*
+    * 初始化控件
+    * */
+    private void init(){
         bingPicImg =  findViewById(R.id.bing_pic_img);
         weatherLayout = findViewById(R.id.weather_layout);
         titleCity =  findViewById(R.id.title_city);
@@ -93,63 +155,7 @@ public class WeatherActivity extends AppCompatActivity {
         swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
         drawerLayout = findViewById(R.id.drawer_layout);
         navButton =  findViewById(R.id.nav_button);
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String weatherString = prefs.getString("weather", null);
-
-        String bingPic = prefs.getString("bing_pic",null);
-        if (bingPic != null){
-            Glide.with(this).load(bingPic).into(bingPicImg);
-        }else {
-            //请求获取图片
-            loadPic();
-        }
-
-
-
-
-        //设置背景图
-        if (Build.VERSION.SDK_INT >= 21) {
-            View decorView = getWindow().getDecorView();
-            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-            getWindow().setStatusBarColor(Color.TRANSPARENT);
-        }
-
-
-        //判断是否错在有缓存
-        if (weatherString != null){
-            Weather weather = Utility.handleWeatherRes(weatherString);
-            showWeather(weather);
-        }else {
-            //从上一个Intent获取weatherId
-            String weatherId = getIntent().getStringExtra("weather_id");
-
-            //在数据加载出来前隐藏weatherLayout
-            weatherLayout.setVisibility(View.INVISIBLE);
-
-            //发起请求
-            requestWeather(weatherId);
-        }
-
-        //手动刷新
-        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                requestWeather(mWeatherId);
-            }
-        });
-
-        //显示侧边栏
-        navButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                drawerLayout.openDrawer(GravityCompat.START);//打开左侧侧边栏
-            }
-        });
-
     }
-
 
     /*
     * 根据weatherId请求服务器，获得天气信息储存到SharedPreferences中，并更新UI，显示天气信息
@@ -262,7 +268,6 @@ public class WeatherActivity extends AppCompatActivity {
 //        Intent intent = new Intent(this, AutoUpdateService.class);
 //        startService(intent);
     }
-
 
     /*
     * 获取背景图并缓存展示

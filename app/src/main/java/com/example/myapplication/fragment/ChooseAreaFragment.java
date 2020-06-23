@@ -72,7 +72,7 @@ public class ChooseAreaFragment extends Fragment {
         titleText = view.findViewById(R.id.title_text);
         backBtn = view.findViewById(R.id.back_btn);
         listView = view.findViewById(R.id.list_view);
-        adapter = new ArrayAdapter(getContext(),android.R.layout.simple_list_item_1,dataList);
+        adapter = new ArrayAdapter(getContext(),R.layout.place_item,dataList);
         listView.setAdapter(adapter);
         return view;
 
@@ -145,7 +145,6 @@ public class ChooseAreaFragment extends Fragment {
         queryProvinces();
     }
 
-
     /*
     * 根据传入的地址，类型查询信息
     * */
@@ -214,12 +213,6 @@ public class ChooseAreaFragment extends Fragment {
 
 
     }
-
-
-
-
-
-
 
     /*
     * 查询全国所有省的数据（优先从数据库查）
