@@ -88,6 +88,9 @@ public class ChooseAreaFragment extends Fragment {
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                /*
+                * 更具当前所处级别渲染不同级别数据
+                * */
                 switch (currentLevel){
                     case LEVEL_PROVINCE:
                         selectProvince = provinceList.get(i);//设置当前选中的省
@@ -99,6 +102,11 @@ public class ChooseAreaFragment extends Fragment {
                         break;
                     case LEVEL_COUNTRY:
                         String weatherId = countryList.get(i).getWeatherId();
+                        /*
+                        * 如果此Activity属于MainActivity实例，则直接跳转到WeatherActivity,
+                        * 天气id首先就会从缓存中获取，如果属于WeatherActivity的实例，那么天气id
+                        * 则会从此处获得
+                        * */
                         if(getActivity() instanceof MainActivity){
                             Intent intent = new Intent(getActivity(), WeatherActivity.class);
                             intent.putExtra("weather_id",weatherId);
@@ -299,8 +307,6 @@ public class ChooseAreaFragment extends Fragment {
 
 
 
-
-
     /*
     * 打开对话框
     * */
@@ -324,8 +330,6 @@ public class ChooseAreaFragment extends Fragment {
             progressDialog.dismiss();
         }
     }
-
-
 
 
 
